@@ -1,17 +1,8 @@
-# Cvičenie 4
+# Cvičenie 5
 
-![](images/notes_1.png)
-![](images/notes_2.png)
-![](images/notes_3.png)
-![](images/notes_4.png)
-![](images/notes_5.png)
-![](images/notes_archive.png)
-![](images/notes_search.png)
-![](images/notes_status\305\210.png)
-![](images/users_note.png)
-![](images/users_pinned_notes.png)
-![](images/categories_1.png)
-![](images/categories_2.png)
-![](images/categories_3.png)
-![](images/categories_4.png)
-![](images/categories_5.png)
+Nakoľko výstupy pre REST API endpointy sú rovnaké (iba sme prepisovali kód aby používal Eloquent ORM), tak tu zobrazujem iba výstupy z nových pridaných endpointov.
+
+![](images/publish_note.png)
+![](images/archive_note.png)
+![](images/pin_note.png)
+![](images/unpin_note.png)
