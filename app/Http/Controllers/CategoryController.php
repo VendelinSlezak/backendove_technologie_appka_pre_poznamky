@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -12,9 +13,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = DB::table('categories')
-            ->orderBy('updated_at', 'desc')
+        $categories = Category::query()
+            ->orderByDesc('updated_at')
             ->get();
+
         return response()->json(['categories' => $categories], Response::HTTP_OK);
     }
 
@@ -23,10 +25,9 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        DB::table('categories')->insert([
+        $note = Category::create([
             'name' => $request->name,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'color' => $request->color,
         ]);
 
         return response()->json([
@@ -39,19 +40,13 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        $category = DB::table('categories')
-            ->where('id', $id)
-            ->first();
+        $category = Category::find($id);
 
         if (!$category) {
-            return response()->json([
-                'message' => 'Kategória nenájdená.'
-            ], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'Kategória nenájdená.'], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json([
-            'category' => $category
-        ], Response::HTTP_OK);
+        return response()->json(['category' => $category], Response::HTTP_OK);
     }
 
     /**
@@ -59,22 +54,18 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $note = DB::table('categories')->where('id', $id)->first();
+        $category = Category::find($id);
 
-        if (!$note) {
-            return response()->json([
-                'message' => 'Kategória nenájdená.'
-            ], Response::HTTP_NOT_FOUND);
+        if (!$category) {
+            return response()->json(['message' => 'Kategória nenájdená.'], Response::HTTP_NOT_FOUND);
         }
 
-        DB::table('categories')->where('id', $id)->update([
+        $category->update([
             'name' => $request->name,
-            'updated_at' => now(),
+            'color' => $request->color,
         ]);
 
-        return response()->json([
-            'message' => 'Kategória bola úspešne aktualizovaná.'
-        ], Response::HTTP_OK);
+        return response()->json(['message' => 'Kategória bola úspešne aktualizovaná.'], Response::HTTP_OK);
     }
 
     /**
@@ -82,15 +73,13 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $note = DB::table('categories')
-            ->where('id', $id)
-            ->first();
+        $category = Category::find($id);
 
-        if (!$note) {
+        if (!$category) {
             return response()->json(['message' => 'Kategória nenájdená.'], Response::HTTP_NOT_FOUND);
         }
 
-        DB::table('categories')->where('id', $id)->delete();
+        $category->delete(); // soft delete
 
         return response()->json(['message' => 'Kategória bola úspešne odstránená.'], Response::HTTP_OK);
     }
