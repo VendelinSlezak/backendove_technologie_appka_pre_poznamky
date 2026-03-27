@@ -13,9 +13,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::query()
-            ->orderByDesc('updated_at')
-            ->get();
+        $categories = Category::latest('updated_at')->get();
 
         return response()->json(['categories' => $categories], Response::HTTP_OK);
     }
@@ -25,27 +23,27 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $note = Category::create([
-            'name' => $request->name,
-            'color' => $request->color,
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:64', 'unique:categories'],
+            'color' => ['required', 'string', 'max:16'],
+        ]);
+
+        $category = Category::create([
+            'name' => $validated['name'],
+            'color' => $validated['color'],
         ]);
 
         return response()->json([
-            'message' => 'Kategória bola úspešne vytvorená.'
+            'message' => 'Kategória bola úspešne vytvorená.',
+            'category' => $category,
         ], Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
-        $category = Category::find($id);
-
-        if (!$category) {
-            return response()->json(['message' => 'Kategória nenájdená.'], Response::HTTP_NOT_FOUND);
-        }
-
         return response()->json(['category' => $category], Response::HTTP_OK);
     }
 
@@ -54,6 +52,11 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:64', 'unique:categories'],
+            'color' => ['required', 'string', 'max:16'],
+        ]);
+
         $category = Category::find($id);
 
         if (!$category) {
@@ -61,8 +64,8 @@ class CategoryController extends Controller
         }
 
         $category->update([
-            'name' => $request->name,
-            'color' => $request->color,
+            'name' => $validated['name'],
+            'color' => $validated['color'],
         ]);
 
         return response()->json(['message' => 'Kategória bola úspešne aktualizovaná.'], Response::HTTP_OK);
@@ -71,15 +74,9 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        $category = Category::find($id);
-
-        if (!$category) {
-            return response()->json(['message' => 'Kategória nenájdená.'], Response::HTTP_NOT_FOUND);
-        }
-
-        $category->delete(); // soft delete
+        $category->delete();
 
         return response()->json(['message' => 'Kategória bola úspešne odstránená.'], Response::HTTP_OK);
     }

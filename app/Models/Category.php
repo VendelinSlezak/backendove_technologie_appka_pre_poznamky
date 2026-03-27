@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
-    use SoftDeletes, HasFactory;
-
-    protected $table = 'categories';
-
-    protected $primaryKey = 'id';
+    use HasFactory;
 
     protected $fillable = [
         'name',
-        'color'
+        'color',
     ];
+
+    public function notes(): BelongsToMany
+    {
+        return $this->belongsToMany(Note::class, 'note_category')->withTimestamps();
+    }
 }
