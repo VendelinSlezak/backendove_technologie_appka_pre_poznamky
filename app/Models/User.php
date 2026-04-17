@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class User extends Authenticatable
 {
@@ -84,5 +85,11 @@ class User extends Authenticatable
     public function hasActivePremium(): bool
     {
         return $this->premium_until !== null && $this->premium_until->isFuture();
+    }
+
+    public function profilePhoto(): MorphOne
+    {
+        return $this->morphOne(Attachment::class, 'attachable')
+            ->where('collection', 'profile_photo');
     }
 }

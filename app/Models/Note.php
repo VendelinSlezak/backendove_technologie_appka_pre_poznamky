@@ -20,7 +20,6 @@ class Note extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id',
         'title',
         'body',
         'status',
@@ -93,5 +92,11 @@ class Note extends Model
             ->orderByDesc('updated_at')
             ->limit($limit)
             ->get();
+    }
+
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable')
+            ->where('collection', 'attachment');
     }
 }
