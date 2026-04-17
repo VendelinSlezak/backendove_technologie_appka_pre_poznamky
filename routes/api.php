@@ -17,7 +17,7 @@ Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/logoutall', [AuthController::class, 'logoutAll']);
 
-        Route::middleware('premiumOnly')->group(function () {
+        Route::middleware('premium')->group(function () {
             Route::post('/notes/{note}/attachments', [AttachmentController::class, 'store']);
         });
         Route::get('/notes/{note}/attachments', [AttachmentController::class, 'index']);
